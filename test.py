@@ -30,20 +30,24 @@ class Inventory:
         self.total_items += quantity
 
     @pytest.mark.parametrize('name,price,quantity,exception', [
-    ('Test Shoes', 10.00, 0, InvalidQuantityException(
-        'Cannot add a quantity of 0. Value must be at least 1'))
+        ('Test Jacket', 10.00, 0, InvalidQuantityException(
+            'Cannot add a quantity of 0. Value must have at least 1 item')),
+        ('Test Jacket', 10.00, 25, NoSpaceException(
+            'Cannot add these 25 items. Only 10 more items can be stored'))
     ])
     def test_add_new_stock_bad_input(name, price, quantity, exception):
         inventory = Inventory(10)
         try:
             inventory.add_new_stock(name, price, quantity)
-        except InvalidQuantityException as inst:
+        except (InvalidQuantityException, NoSpaceException) as inst:
+            # First ensure the exception is of the right type
             assert isinstance(inst, type(exception))
+            # Ensure that exceptions have the same message
             assert inst.args == exception.args
         else:
             pytest.fail("Expected error but found none")
-
-
    
+
+    
 
     

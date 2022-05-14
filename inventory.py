@@ -1,3 +1,4 @@
+
 def test_buy_and_sell_nikes_adidas():
     
     inventory = Inventory()
@@ -36,3 +37,5 @@ def test_buy_and_sell_nikes_adidas():
         inventory = Inventory(limit=25)
         assert inventory.limit == 25
         assert inventory.total_items == 0
+
+    
