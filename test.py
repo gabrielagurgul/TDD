@@ -22,7 +22,7 @@ class Inventory:
     def add_new_stock(self, name, price, quantity):
         if quantity <= 0:
             raise InvalidQuantityException(
-                'Cannot add a quantity of {}. All new items must be at least 1'.format(quantity))
+                'Cannot add a quantity of {}. Value must be at least 1'.format(quantity))
         self.stocks[name] = {
             'price': price,
             'quantity': quantity
@@ -31,7 +31,7 @@ class Inventory:
 
     @pytest.mark.parametrize('name,price,quantity,exception', [
     ('Test Shoes', 10.00, 0, InvalidQuantityException(
-        'Cannot add a quantity of 0. All new stocks must have at least 1 item'))
+        'Cannot add a quantity of 0. Value must be at least 1'))
     ])
     def test_add_new_stock_bad_input(name, price, quantity, exception):
         inventory = Inventory(10)
