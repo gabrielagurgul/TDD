@@ -1,3 +1,8 @@
+class InvalidQuantityException(Exception):
+        pass
+
+class NoSpaceException(Exception):
+        pass 
 
 def test_buy_and_sell_nikes_adidas():
     
@@ -27,8 +32,8 @@ def test_buy_and_sell_nikes_adidas():
         assert inventory.limit == 100
         assert inventory.total_items == 0
 
-    class Inventory:
-        def __init__(self, limit=100):
+class Inventory:
+    def __init__(self, limit=100):
             self.limit = limit
             self.total_items = 0
 

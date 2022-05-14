@@ -1,4 +1,5 @@
 import pytest
+from inventory import Inventory, InvalidQuantityException, NoSpaceException
 
 @pytest.fixture
 def no_stock_inventory():
@@ -10,19 +11,13 @@ def test_add_new_stock_success(no_stock_inventory):
     assert no_stock_inventory.stocks['Test Shoes']['price'] == 10.00
     assert no_stock_inventory.stocks['Test Shoes']['quantity'] == 5
 
-class InvalidQuantityException(Exception):
-        pass
-
-class NoSpaceException(Exception):
-        pass
-
 class Inventory:
     def __init__(self, limit=100):
         self.limit = limit
         self.total_items = 0
         self.stocks = {}
 
-    def add_new_stock(self, name, price, quantity): #?
+    def add_new_stock(self, name, price, quantity): 
         if quantity <= 0:
             raise InvalidQuantityException(
                 'Cannot add a quantity of {}. All new stocks must have at least 1 item'.format(quantity))
@@ -47,12 +42,13 @@ class Inventory:
         ('Test Shoes', 10.00, 25, NoSpaceException(
             'Cannot add these 25 items. Only 10 items can be added'))
     ])
+
     def test_add_new_stock_bad_input(name, price, quantity, exception):
         inventory = Inventory(10)
         try:
             inventory.add_new_stock(name, price, quantity)
         except (InvalidQuantityException, NoSpaceException) as inst:
-            assert isinstance(inst, type(exception)) #cehck right side
+            assert isinstance(inst, type(exception)) 
             assert inst.args == exception.args
         else:
             pytest.fail("Expected error but found none")
