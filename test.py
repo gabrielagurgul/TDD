@@ -1,35 +1,23 @@
 import pytest
-from inventory import Inventory, InvalidQuantityException, NoSpaceException
+from inventory import Inventory, InvalidQuantityException, NoSpaceException, ItemNotFoundException
 
 @pytest.fixture
 def no_stock_inventory():
     return Inventory(10)
+
+@pytest.fixture
+def ten_stock_inventory():
+    """Returns an inventory with some test stock items"""
+    inventory = Inventory(20)
+    inventory.add_new_stock('Puma Shoes', 100.00, 8)
+    inventory.add_new_stock('Adidas Shoes', 225.50, 2)
+    return inventory
 
 def test_add_new_stock_success(no_stock_inventory):
     no_stock_inventory.add_new_stock('Test Shoes', 10.00, 5)
     assert no_stock_inventory.total_items == 5
     assert no_stock_inventory.stocks['Test Shoes']['price'] == 10.00
     assert no_stock_inventory.stocks['Test Shoes']['quantity'] == 5
-
-class Inventory:
-    def __init__(self, limit=100):
-        self.limit = limit
-        self.total_items = 0
-        self.stocks = {}
-
-    def add_new_stock(self, name, price, quantity): 
-        if quantity <= 0:
-            raise InvalidQuantityException(
-                'Cannot add a quantity of {}. All new stocks must have at least 1 item'.format(quantity))
-        if self.total_items + quantity > self.limit:
-            remaining_space = self.limit - self.total_items
-            raise NoSpaceException(
-                'Cannot add these {} items. Only {} more items can be stored'.format(quantity, remaining_space))
-        self.stocks[name] = {
-            'price': price,
-            'quantity': quantity
-        }
-        self.total_items += quantity
 
     @pytest.mark.parametrize('name,price,quantity,exception', [
         ('Test Shoes', 10.00, 0, InvalidQuantityException(
@@ -52,8 +40,20 @@ class Inventory:
             assert inst.args == exception.args
         else:
             pytest.fail("Expected error but found none")
-   
 
-    
 
-    
+    @pytest.mark.parametrize('name,quantity,exception,new_quantity,new_total', [
+        ('Puma Test', 0,
+        InvalidQuantityException(
+            'Cannot remove a quantity of 0. Must remove at least 1 item'),
+            0, 0),
+        ('Not Here', 5,
+        ItemNotFoundException(
+            'Could not find Not Here in our stocks. Cannot remove non-existing stock'),
+            0, 0),
+        ('Puma Test', 25,
+        InvalidQuantityException(
+            'Cannot remove these 25 items. Only 8 items are in stock'),
+        0, 0),
+        ('Puma Test', 5, None, 3, 5)
+    ])
