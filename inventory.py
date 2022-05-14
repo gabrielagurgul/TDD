@@ -63,6 +63,7 @@ class Inventory:
         self.total_items += quantity
 
     def remove_stock(self, name, quantity):
+        
         if quantity <= 0:
             raise InvalidQuantityException(
                 'Cannot remove a quantity of {}. Must remove at least 1 item'.format(quantity))
